@@ -46,4 +46,29 @@ public class AIService {
 
         return basePrompt;
     }
+
+    public String generateQuiz(String code) {
+        String systemText = "You are a computer science professor. Generate a 3-question multiple choice quiz based on the provided code to test understanding. Return ONLY raw JSON array. Format: [{\"question\": \"...\", \"options\": [\"A\", \"B\", \"C\", \"D\"], \"correctAnswer\": 0}] (correctAnswer is the 0-based index)";
+        SystemMessage system = new SystemMessage(systemText);
+        UserMessage user = new UserMessage("Generate quiz for:\n" + code);
+
+        Prompt prompt = new Prompt(java.util.List.of(system, user));
+        ChatResponse response = chatClient.call(prompt);
+        String content = response.getResult().getOutput().getContent();
+
+        // Cleanup Markdown formatting if AI wraps it
+        if (content.contains("```json")) {
+            content = content.substring(content.indexOf("```json") + 7);
+            if (content.contains("```")) {
+                content = content.substring(0, content.indexOf("```"));
+            }
+        } else if (content.contains("```")) {
+            content = content.substring(content.indexOf("```") + 3);
+            if (content.contains("```")) {
+                content = content.substring(0, content.indexOf("```"));
+            }
+        }
+
+        return content.trim();
+    }
 }

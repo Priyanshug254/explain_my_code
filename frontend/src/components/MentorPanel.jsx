@@ -1,15 +1,27 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Bot, User, Send, Globe, Award } from 'lucide-react';
+import { Bot, User, Send, Globe, Award, CheckCircle, XCircle, BrainCircuit, MessageSquare } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MentorPanel = ({ activeCode, activeFile }) => {
+    const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'quiz'
+
+    // Chat State
     const [messages, setMessages] = useState([
-        { role: 'system', content: "Hi! I'm your AI Code Mentor. Select a file and ask me to explain it, or select a specific block of code." }
+        { role: 'system', content: "Hi! I'm your AI Code Mentor. Select a file and ask me to explain it, or switch to the Quiz tab to test your knowledge!" }
     ]);
     const [loading, setLoading] = useState(false);
-    const [mode, setMode] = useState("beginner"); // beginner | interview
-    const [language, setLanguage] = useState("english"); // english | hinglish | hindi
+    const [mode, setMode] = useState("beginner");
+    const [language, setLanguage] = useState("english");
 
+    // Quiz State
+    const [quizQuestions, setQuizQuestions] = useState(null);
+    const [quizLoading, setQuizLoading] = useState(false);
+    const [userAnswers, setUserAnswers] = useState({}); // { questionIndex: optionIndex }
+    const [quizSubmitted, setQuizSubmitted] = useState(false);
+    const [score, setScore] = useState(0);
+
+    // --- Chat Logic ---
     const askAI = async (customPrompt = null) => {
         if (!activeCode) return;
 
@@ -18,11 +30,11 @@ const MentorPanel = ({ activeCode, activeFile }) => {
         setMessages(prev => [...prev, userMsg]);
 
         try {
-            const response = await fetch('http://localhost:8080/api/ai/explain', {
+            const response = await fetch('http://localhost:8081/api/ai/explain', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    code: activeCode.substring(0, 5000), // Limit payload for demo
+                    code: activeCode.substring(0, 5000),
                     mode: mode,
                     language: language
                 })
@@ -36,73 +48,230 @@ const MentorPanel = ({ activeCode, activeFile }) => {
         }
     };
 
+    // --- Quiz Logic ---
+    const generateQuiz = async () => {
+        if (!activeCode) return;
+        setQuizLoading(true);
+        setQuizQuestions(null);
+        setQuizSubmitted(false);
+        setUserAnswers({});
+
+        try {
+            const response = await fetch('http://localhost:8081/api/ai/quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: activeCode.substring(0, 5000) })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setQuizQuestions(data); // Expecting array
+            } else {
+                console.error("Quiz failed");
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setQuizLoading(false);
+        }
+    };
+
+    const handleAnswerSelect = (qIndex, optionIndex) => {
+        if (quizSubmitted) return;
+        setUserAnswers(prev => ({ ...prev, [qIndex]: optionIndex }));
+    };
+
+    const submitQuiz = () => {
+        let correctCount = 0;
+        quizQuestions.forEach((q, idx) => {
+            if (userAnswers[idx] === q.correctAnswer) correctCount++;
+        });
+        setScore(correctCount);
+        setQuizSubmitted(true);
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {/* Controls */}
-            <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <select
-                    className="glass-panel"
-                    style={{ color: 'white', padding: '5px', outline: 'none' }}
-                    value={mode}
-                    onChange={(e) => setMode(e.target.value)}
+            {/* Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--border)' }}>
+                <button
+                    onClick={() => setActiveTab('chat')}
+                    style={{
+                        flex: 1,
+                        padding: '15px',
+                        background: activeTab === 'chat' ? 'rgba(108, 92, 231, 0.1)' : 'transparent',
+                        color: activeTab === 'chat' ? 'var(--primary)' : 'var(--text-muted)',
+                        border: 'none',
+                        borderBottom: activeTab === 'chat' ? '2px solid var(--primary)' : 'none',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        fontWeight: '600'
+                    }}
                 >
-                    <option value="beginner">Beginner Mode</option>
-                    <option value="interview">Interview Mode</option>
-                </select>
-
-                <select
-                    className="glass-panel"
-                    style={{ color: 'white', padding: '5px', outline: 'none' }}
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
+                    <MessageSquare size={16} /> Mentor Chat
+                </button>
+                <button
+                    onClick={() => setActiveTab('quiz')}
+                    style={{
+                        flex: 1,
+                        padding: '15px',
+                        background: activeTab === 'quiz' ? 'rgba(108, 92, 231, 0.1)' : 'transparent',
+                        color: activeTab === 'quiz' ? 'var(--primary)' : 'var(--text-muted)',
+                        border: 'none',
+                        borderBottom: activeTab === 'quiz' ? '2px solid var(--primary)' : 'none',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        fontWeight: '600'
+                    }}
                 >
-                    <option value="english">English</option>
-                    <option value="hinglish">Hinglish</option>
-                    <option value="hindi">Hindi</option>
-                </select>
+                    <BrainCircuit size={16} /> Knowledge Quiz
+                </button>
             </div>
 
-            {/* Chat Area */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '15px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                {messages.map((msg, idx) => (
-                    <div key={idx} style={{
-                        alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                        maxWidth: '90%'
-                    }}>
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            marginBottom: '5px',
-                            justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start'
-                        }}>
-                            {msg.role === 'system' ? <Bot size={16} color="var(--secondary)" /> : <User size={16} color="var(--primary)" />}
-                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{msg.role === 'user' ? 'You' : 'Mentor'}</span>
+            {/* Content Area */}
+            <div style={{ flex: 1, overflowY: 'auto', position: 'relative' }}>
+
+                {/* --- CHAT VIEW --- */}
+                {activeTab === 'chat' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            <select
+                                className="glass-panel"
+                                style={{ color: 'white', padding: '5px', outline: 'none' }}
+                                value={mode}
+                                onChange={(e) => setMode(e.target.value)}
+                            >
+                                <option value="beginner">Beginner Mode</option>
+                                <option value="interview">Interview Mode</option>
+                            </select>
+
+                            <select
+                                className="glass-panel"
+                                style={{ color: 'white', padding: '5px', outline: 'none' }}
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                            >
+                                <option value="english">English</option>
+                                <option value="hinglish">Hinglish</option>
+                                <option value="hindi">Hindi</option>
+                            </select>
                         </div>
-                        <div className="glass-panel" style={{
-                            padding: '12px',
-                            borderRadius: '12px',
-                            background: msg.role === 'user' ? 'rgba(108, 92, 231, 0.2)' : 'rgba(28, 28, 46, 0.7)',
-                            border: msg.role === 'user' ? '1px solid var(--primary-glow)' : '1px solid var(--glass-border)'
-                        }}>
-                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '15px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            {messages.map((msg, idx) => (
+                                <div key={idx} style={{
+                                    alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                                    maxWidth: '90%'
+                                }}>
+                                    <div className="glass-panel" style={{
+                                        padding: '12px',
+                                        borderRadius: '12px',
+                                        background: msg.role === 'user' ? 'rgba(108, 92, 231, 0.2)' : 'rgba(28, 28, 46, 0.7)',
+                                        border: msg.role === 'user' ? '1px solid var(--primary-glow)' : '1px solid var(--glass-border)'
+                                    }}>
+                                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                    </div>
+                                </div>
+                            ))}
+                            {loading && <div style={{ color: 'var(--text-muted)' }}>Thinking...</div>}
+                        </div>
+                        <div style={{ padding: '15px', borderTop: '1px solid var(--border)' }}>
+                            <button
+                                className="btn-primary"
+                                style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '10px' }}
+                                onClick={() => askAI()}
+                                disabled={!activeFile || loading}
+                            >
+                                <Award size={18} />
+                                Explain This File
+                            </button>
                         </div>
                     </div>
-                ))}
-                {loading && <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Thinking...</div>}
-            </div>
+                )}
 
-            {/* Input Area */}
-            <div style={{ padding: '15px', borderTop: '1px solid var(--border)' }}>
-                <button
-                    className="btn-primary"
-                    style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '10px' }}
-                    onClick={() => askAI()}
-                    disabled={!activeFile || loading}
-                >
-                    <Award size={18} />
-                    Explain This File
-                </button>
+                {/* --- QUIZ VIEW --- */}
+                {activeTab === 'quiz' && (
+                    <div style={{ padding: '20px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        {!activeFile ? (
+                            <div className="flex-center" style={{ height: '100%', color: 'var(--text-muted)' }}>
+                                Select a file to generate a quiz
+                            </div>
+                        ) : !quizQuestions && !quizLoading ? (
+                            <div className="flex-center" style={{ height: '100%', flexDirection: 'column', gap: '20px' }}>
+                                <BrainCircuit size={48} color="var(--primary)" />
+                                <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                                    Test your understanding of <b>{activeFile}</b>.<br />
+                                    The AI will generate 3 custom questions.
+                                </p>
+                                <button className="btn-primary" onClick={generateQuiz}>
+                                    Generate Quiz
+                                </button>
+                            </div>
+                        ) : quizLoading ? (
+                            <div className="flex-center" style={{ height: '100%' }}>
+                                Generating Questions...
+                            </div>
+                        ) : (
+                            <div style={{ paddingBottom: '20px' }}>
+                                {quizSubmitted && (
+                                    <div className="glass-panel" style={{ padding: '15px', marginBottom: '20px', background: 'rgba(0, 206, 201, 0.1)', borderColor: 'var(--secondary)' }}>
+                                        <h3 style={{ margin: 0, color: 'var(--secondary)' }}>
+                                            Score: {score} / {quizQuestions.length}
+                                        </h3>
+                                    </div>
+                                )}
+
+                                {quizQuestions.map((q, idx) => (
+                                    <div key={idx} className="glass-panel" style={{ padding: '15px', marginBottom: '15px' }}>
+                                        <p style={{ fontWeight: '600', marginBottom: '10px' }}>{idx + 1}. {q.question}</p>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            {q.options.map((opt, optIdx) => {
+                                                const isSelected = userAnswers[idx] === optIdx;
+                                                const isCorrect = q.correctAnswer === optIdx;
+
+                                                let bg = 'rgba(255,255,255,0.05)';
+                                                if (quizSubmitted) {
+                                                    if (isCorrect) bg = 'rgba(46, 204, 113, 0.3)';
+                                                    else if (isSelected && !isCorrect) bg = 'rgba(231, 76, 60, 0.3)';
+                                                } else if (isSelected) {
+                                                    bg = 'var(--primary)';
+                                                }
+
+                                                return (
+                                                    <div
+                                                        key={optIdx}
+                                                        onClick={() => handleAnswerSelect(idx, optIdx)}
+                                                        style={{
+                                                            padding: '10px',
+                                                            borderRadius: '8px',
+                                                            background: bg,
+                                                            cursor: quizSubmitted ? 'default' : 'pointer',
+                                                            border: '1px solid transparent',
+                                                            display: 'flex', justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        {opt}
+                                                        {quizSubmitted && isCorrect && <CheckCircle size={16} color="#2ecc71" />}
+                                                        {quizSubmitted && isSelected && !isCorrect && <XCircle size={16} color="#e74c3c" />}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {!quizSubmitted && (
+                                    <button className="btn-primary" style={{ width: '100%' }} onClick={submitQuiz} disabled={Object.keys(userAnswers).length < quizQuestions.length}>
+                                        Submit Answers
+                                    </button>
+                                )}
+                                {quizSubmitted && (
+                                    <button className="btn-primary" style={{ width: '100%', marginTop: '10px', background: 'var(--glass)' }} onClick={generateQuiz}>
+                                        Try New Quiz
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -38,7 +38,7 @@ const FileUpload = ({ onUploadSuccess }) => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:8080/api/project/upload', {
+            const response = await fetch('http://localhost:8081/api/project/upload', {
                 method: 'POST',
                 body: formData,
             });
@@ -61,7 +61,7 @@ const FileUpload = ({ onUploadSuccess }) => {
         if (!gitUrl) return;
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8080/api/project/clone', {
+            const response = await fetch('http://localhost:8081/api/project/clone', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: gitUrl })

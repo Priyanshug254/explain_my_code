@@ -26,4 +26,11 @@ public class AIController {
         String explanation = aiService.explainCode(code, mode, language);
         return ResponseEntity.ok(Map.of("explanation", explanation));
     }
+
+    @PostMapping("/quiz")
+    public ResponseEntity<String> generateQuiz(@RequestBody Map<String, String> payload) {
+        String code = payload.get("code");
+        String quizJson = aiService.generateQuiz(code);
+        return ResponseEntity.ok(quizJson);
+    }
 }

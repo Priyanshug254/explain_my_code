@@ -21,11 +21,11 @@ function App() {
     setActivePath(path);
     // Fetch file content from backend
     try {
-      const response = await fetch(`http://localhost:8080/api/project/file?path=${encodeURIComponent(path)}`);
+      const response = await fetch(`http://localhost:8081/api/project/file?path=${encodeURIComponent(path)}`);
       const data = await response.json();
       if (data.content) {
-          setActiveCode(data.content);
-          setActiveFile(path.split(/[\\/]/).pop()); // Get filename
+        setActiveCode(data.content);
+        setActiveFile(path.split(/[\\/]/).pop()); // Get filename
       }
     } catch (err) {
       console.error("Failed to load file", err);
@@ -39,20 +39,20 @@ function App() {
         <h1 style={{ fontSize: '1.2rem', fontWeight: '800', background: 'linear-gradient(to right, #6c5ce7, #00cec9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           CodeMentor AI
         </h1>
-        {projectTree && <span style={{fontSize: '0.9rem', color: 'var(--text-muted)'}}>{projectTree.name}</span>}
+        {projectTree && <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{projectTree.name}</span>}
       </header>
 
       {/* Main Workspace */}
       <div style={{ display: 'flex', flex: 1, gap: '10px', padding: '0 10px 10px 10px', overflow: 'hidden' }}>
-        
+
         {/* Left: Project Explorer */}
         <div className="glass-panel" style={{ width: '250px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', fontWeight: '600' }}>Explorer</div>
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {!projectTree ? (
-               <div style={{padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem'}}>No project loaded</div>
+              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem' }}>No project loaded</div>
             ) : (
-               <FileTree node={projectTree} onSelect={handleFileSelect} />
+              <FileTree node={projectTree} onSelect={handleFileSelect} />
             )}
           </div>
         </div>
@@ -63,12 +63,12 @@ function App() {
             <FileUpload onUploadSuccess={handleProjectLoaded} />
           ) : (
             <>
-                <div style={{ padding: '10px 15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <span style={{fontWeight: '500'}}>{activeFile || "Select a file"}</span>
-                </div>
-                <div style={{ flex: 1, overflow: 'hidden' }}>
-                     <CodeViewer code={activeCode} language={activeFile ? activeFile.split('.').pop() : 'text'} />
-                </div>
+              <div style={{ padding: '10px 15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <span style={{ fontWeight: '500' }}>{activeFile || "Select a file"}</span>
+              </div>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <CodeViewer code={activeCode} language={activeFile ? activeFile.split('.').pop() : 'text'} />
+              </div>
             </>
           )}
         </div>
