@@ -31,7 +31,7 @@ const CodeViewer = ({ code, language }) => {
 
     return (
         <div style={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-             <button 
+            <button
                 onClick={handleCopy}
                 style={{
                     position: 'absolute',
@@ -59,6 +59,19 @@ const CodeViewer = ({ code, language }) => {
                 >
                     {code}
                 </SyntaxHighlighter>
+            </div>
+            <div style={{
+                padding: '5px 15px',
+                borderTop: '1px solid var(--border)',
+                fontSize: '0.75rem',
+                color: 'var(--text-muted)',
+                background: 'rgba(0,0,0,0.2)',
+                display: 'flex',
+                gap: '15px'
+            }}>
+                <span>{mappedLang.toUpperCase()}</span>
+                <span>{code.split('\n').length} Lines</span>
+                <span>{code.length} Chars</span>
             </div>
         </div>
     );
