@@ -6,6 +6,7 @@ import FileUpload from './components/FileUpload';
 import FileTree from './components/FileTree';
 import CodeViewer from './components/CodeViewer';
 import MentorPanel from './components/MentorPanel';
+import Footer from './components/Footer';
 
 function App() {
   const [projectTree, setProjectTree] = useState(null);
@@ -79,6 +80,7 @@ function App() {
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 }
