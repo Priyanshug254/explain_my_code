@@ -48,6 +48,12 @@ const MentorPanel = ({ activeCode, activeFile }) => {
         }
     };
 
+    const clearChat = () => {
+        setMessages([
+            { role: 'system', content: "Chat cleared. Ready for your next question!" }
+        ]);
+    };
+
     // --- Quiz Logic ---
     const generateQuiz = async () => {
         if (!activeCode) return;
@@ -133,27 +139,35 @@ const MentorPanel = ({ activeCode, activeFile }) => {
                 {/* --- CHAT VIEW --- */}
                 {activeTab === 'chat' && (
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                            <select
-                                className="glass-panel"
-                                style={{ color: 'white', padding: '5px', outline: 'none' }}
-                                value={mode}
-                                onChange={(e) => setMode(e.target.value)}
-                            >
-                                <option value="beginner">Beginner Mode</option>
-                                <option value="interview">Interview Mode</option>
-                            </select>
+                        <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <select
+                                    className="glass-panel"
+                                    style={{ color: 'white', padding: '5px', outline: 'none' }}
+                                    value={mode}
+                                    onChange={(e) => setMode(e.target.value)}
+                                >
+                                    <option value="beginner">Beginner</option>
+                                    <option value="interview">Interview</option>
+                                </select>
 
-                            <select
-                                className="glass-panel"
-                                style={{ color: 'white', padding: '5px', outline: 'none' }}
-                                value={language}
-                                onChange={(e) => setLanguage(e.target.value)}
+                                <select
+                                    className="glass-panel"
+                                    style={{ color: 'white', padding: '5px', outline: 'none' }}
+                                    value={language}
+                                    onChange={(e) => setLanguage(e.target.value)}
+                                >
+                                    <option value="english">EN</option>
+                                    <option value="hinglish">Hinglish</option>
+                                    <option value="hindi">HI</option>
+                                </select>
+                            </div>
+                            <button
+                                onClick={clearChat}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}
                             >
-                                <option value="english">English</option>
-                                <option value="hinglish">Hinglish</option>
-                                <option value="hindi">Hindi</option>
-                            </select>
+                                Clear
+                            </button>
                         </div>
                         <div style={{ flex: 1, overflowY: 'auto', padding: '15px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {messages.map((msg, idx) => (
