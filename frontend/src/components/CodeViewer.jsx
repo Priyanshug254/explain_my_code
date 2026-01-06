@@ -29,26 +29,48 @@ const CodeViewer = ({ code, language }) => {
         navigator.clipboard.writeText(code);
     };
 
+    const handleDownload = () => {
+        const element = document.createElement("a");
+        const file = new Blob([code], { type: 'text/plain' });
+        element.href = URL.createObjectURL(file);
+        element.download = `download.${language}`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    };
+
     return (
         <div style={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-            <button
-                onClick={handleCopy}
-                style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '25px',
-                    zIndex: 10,
-                    background: 'rgba(0,0,0,0.5)',
-                    color: 'white',
-                    border: '1px solid var(--border)',
-                    borderRadius: '4px',
-                    padding: '4px 8px',
-                    cursor: 'pointer',
-                    fontSize: '0.8rem'
-                }}
-            >
-                Copy
-            </button>
+            <div style={{ position: 'absolute', top: '10px', right: '25px', zIndex: 10, display: 'flex', gap: '10px' }}>
+                <button
+                    onClick={handleDownload}
+                    style={{
+                        background: 'rgba(0,0,0,0.5)',
+                        color: 'white',
+                        border: '1px solid var(--border)',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem'
+                    }}
+                >
+                    Download
+                </button>
+                <button
+                    onClick={handleCopy}
+                    style={{
+                        background: 'rgba(0,0,0,0.5)',
+                        color: 'white',
+                        border: '1px solid var(--border)',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem'
+                    }}
+                >
+                    Copy
+                </button>
+            </div>
             <div style={{ flex: 1, overflow: 'auto', fontSize: '14px' }}>
                 <SyntaxHighlighter
                     language={mappedLang}
