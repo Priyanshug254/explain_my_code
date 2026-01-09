@@ -37,7 +37,7 @@ function App() {
     <div className="fullscreen">
       {/* Header */}
       <header className="glass-panel" style={{ height: '60px', margin: '10px', display: 'flex', alignItems: 'center', padding: '0 20px', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: '1.2rem', fontWeight: '800', background: 'linear-gradient(to right, #6c5ce7, #00cec9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h1 className="gradient-text" style={{ fontSize: '1.2rem', fontWeight: '800', margin: 0 }}>
           CodeMentor AI
         </h1>
         {projectTree && <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{projectTree.name}</span>}
