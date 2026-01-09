@@ -18,16 +18,19 @@ const FileTreeNode = ({ node, level = 0, onSelect }) => {
             <div
                 onClick={handleClick}
                 style={{
-                    padding: '6px 10px',
-                    paddingLeft: `${level * 15 + 10}px`,
+                    padding: '8px 12px',
+                    paddingLeft: `${level * 15 + 12}px`,
                     display: 'flex',
                     alignItems: 'center',
                     cursor: 'pointer',
                     color: isDir ? 'var(--text-main)' : 'var(--text-muted)',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    borderRadius: '6px',
+                    margin: '2px 5px',
+                    transition: 'background 0.2s ease'
                 }}
                 className="tree-item"
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(108, 92, 231, 0.1)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
                 {isDir && (
