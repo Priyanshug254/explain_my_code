@@ -63,6 +63,21 @@ body {
   border-radius: 12px;
 }
 
+.glass-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.glass-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(108, 92, 231, 0.2);
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), #a29bfe);
   color: white;
