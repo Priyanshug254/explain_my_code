@@ -29,6 +29,11 @@ body {
   /* App-like feel */
 }
 
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
