@@ -20,6 +20,9 @@ public class FileService {
 
         // Save zip file
         Path zipPath = uploadPath.resolve("project.zip");
+        if (zipPath == null) {
+            throw new IOException("Failed to create zip path");
+        }
         file.transferTo(zipPath);
 
         // Unzip
