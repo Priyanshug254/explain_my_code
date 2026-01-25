@@ -901,3 +901,20 @@ textarea:focus-visible {
 .hover\:opacity-100:hover {
   opacity: 1;
 }
+
+/* Opacity Hover States - New Contribution */
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+.group:hover .group-hover\:opacity-0 {
+  opacity: 0;
+}
+
+.hover\:opacity-50:hover {
+  opacity: 0.5;
+}
+
+.hover\:opacity-75:hover {
+  opacity: 0.75;
+}
