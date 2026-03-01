@@ -963,3 +963,25 @@ textarea:focus-visible {
 .hover\:rotate-12:hover {
   transform: rotate(12deg);
 }
+
+/* Neon Glow System - Contribution 1 */
+.glow-primary {
+  box-shadow: 0 0 15px var(--primary-glow), 0 0 30px rgba(108, 92, 231, 0.2);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 15px rgba(0, 206, 201, 0.3), 0 0 30px rgba(0, 206, 201, 0.1);
+}
+
+.text-glow-primary {
+  text-shadow: 0 0 8px var(--primary-glow);
+}
+
+.text-glow-secondary {
+  text-shadow: 0 0 8px rgba(0, 206, 201, 0.5);
+}
+
+.border-glow-primary {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 10px var(--primary-glow), 0 0 10px var(--primary-glow);
+}
