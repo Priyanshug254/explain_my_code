@@ -1,5 +1,6 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import CodeInsights from './CodeInsights';
 
 const CodeViewer = ({ code, language }) => {
     if (!code) {
@@ -71,6 +72,7 @@ const CodeViewer = ({ code, language }) => {
                     Copy
                 </button>
             </div>
+            <CodeInsights code={code} />
             <div style={{ flex: 1, overflow: 'auto', fontSize: '14px' }}>
                 <SyntaxHighlighter
                     language={mappedLang}
