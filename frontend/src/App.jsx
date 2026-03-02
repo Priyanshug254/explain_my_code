@@ -14,6 +14,9 @@ function App() {
   const [activeCode, setActiveCode] = useState("");
   const [activePath, setActivePath] = useState("");
   const [aiAction, setAiAction] = useState(null);
+  const [isZenMode, setIsZenMode] = useState(false);
+
+  const toggleZenMode = () => setIsZenMode(!isZenMode);
 
   const handleAiAction = (actionType) => {
     setAiAction({ type: actionType, timestamp: Date.now() });
@@ -39,20 +42,29 @@ function App() {
   };
 
   return (
-    <div className="fullscreen">
+    <div className={`fullscreen ${isZenMode ? 'zen-mode' : ''}`}>
       {/* Header */}
       <header className="glass-panel" style={{ height: '60px', margin: '10px', display: 'flex', alignItems: 'center', padding: '0 20px', justifyContent: 'space-between' }}>
         <h1 className="gradient-text" style={{ fontSize: '1.2rem', fontWeight: '800', margin: 0 }}>
           CodeMentor AI
         </h1>
-        {projectTree && <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{projectTree.name}</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          {projectTree && <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{projectTree.name}</span>}
+          <button
+            onClick={toggleZenMode}
+            className={`badge ${isZenMode ? 'badge-success' : 'badge-info'}`}
+            style={{ cursor: 'pointer', border: '1px solid currentColor' }}
+          >
+            {isZenMode ? 'Exit Zen Mode' : 'Zen Mode'}
+          </button>
+        </div>
       </header>
 
       {/* Main Workspace */}
       <div style={{ display: 'flex', flex: 1, gap: '10px', padding: '0 10px 10px 10px', overflow: 'hidden' }}>
 
         {/* Left: Project Explorer */}
-        <div className="glass-panel" style={{ width: '250px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div className="glass-panel explorer-panel" style={{ width: '250px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', fontWeight: '600' }}>Explorer</div>
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {!projectTree ? (
@@ -64,7 +76,7 @@ function App() {
         </div>
 
         {/* Center: Code Viewer */}
-        <div className="glass-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+        <div className="glass-panel code-workspace" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
           {!projectTree ? (
             <FileUpload onUploadSuccess={handleProjectLoaded} />
           ) : (
@@ -84,7 +96,7 @@ function App() {
         </div>
 
         {/* Right: AI Mentor */}
-        <div className="glass-panel" style={{ width: '350px', display: 'flex', flexDirection: 'column' }}>
+        <div className="glass-panel mentor-sidebar" style={{ width: '350px', display: 'flex', flexDirection: 'column' }}>
           <MentorPanel activeCode={activeCode} activeFile={activeFile} externalAction={aiAction} />
         </div>
 

@@ -90,6 +90,25 @@ body {
   backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.zen-mode .explorer-panel,
+.zen-mode .mentor-sidebar,
+.zen-mode footer {
+  display: none !important;
+}
+
+.zen-mode .code-workspace {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.zen-mode .glass-panel {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .glass-input {
