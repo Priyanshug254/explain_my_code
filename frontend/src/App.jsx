@@ -13,6 +13,11 @@ function App() {
   const [activeFile, setActiveFile] = useState(null);
   const [activeCode, setActiveCode] = useState("");
   const [activePath, setActivePath] = useState("");
+  const [aiAction, setAiAction] = useState(null);
+
+  const handleAiAction = (actionType) => {
+    setAiAction({ type: actionType, timestamp: Date.now() });
+  };
 
   const handleProjectLoaded = (tree) => {
     setProjectTree(tree);
@@ -68,7 +73,11 @@ function App() {
                 <span style={{ fontWeight: '500' }}>{activeFile || "Select a file"}</span>
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
-                <CodeViewer code={activeCode} language={activeFile ? activeFile.split('.').pop() : 'text'} />
+                <CodeViewer
+                  code={activeCode}
+                  language={activeFile ? activeFile.split('.').pop() : 'text'}
+                  onAction={handleAiAction}
+                />
               </div>
             </>
           )}
@@ -76,7 +85,7 @@ function App() {
 
         {/* Right: AI Mentor */}
         <div className="glass-panel" style={{ width: '350px', display: 'flex', flexDirection: 'column' }}>
-          <MentorPanel activeCode={activeCode} activeFile={activeFile} />
+          <MentorPanel activeCode={activeCode} activeFile={activeFile} externalAction={aiAction} />
         </div>
 
       </div>

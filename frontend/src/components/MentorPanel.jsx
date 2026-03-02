@@ -16,8 +16,21 @@ const TypingIndicator = () => (
     </div>
 );
 
-const MentorPanel = ({ activeCode, activeFile }) => {
+const MentorPanel = ({ activeCode, activeFile, externalAction }) => {
     const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'quiz'
+
+    // Listen for external actions (Explain, Optimize, Security)
+    useEffect(() => {
+        if (externalAction) {
+            setActiveTab('chat');
+            const prompts = {
+                'explain': "Explain this code in detail.",
+                'optimize': "How can I optimize this code for better performance and readability?",
+                'security': "Perform a security audit of this code. Are there any vulnerabilities?"
+            };
+            askAI(prompts[externalAction.type] || "Hello!");
+        }
+    }, [externalAction]);
 
     // Chat State
     const [messages, setMessages] = useState([

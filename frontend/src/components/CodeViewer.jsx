@@ -1,8 +1,9 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Sparkles, Zap, ShieldAlert, Copy, Download } from 'lucide-react';
 import CodeInsights from './CodeInsights';
 
-const CodeViewer = ({ code, language }) => {
+const CodeViewer = ({ code, language, onAction }) => {
     if (!code) {
         return (
             <div className="flex-center" style={{ height: '100%', color: 'var(--text-muted)', flexDirection: 'column' }}>
@@ -72,6 +73,48 @@ const CodeViewer = ({ code, language }) => {
                     Copy
                 </button>
             </div>
+
+            {/* AI Action Bar Overlay */}
+            <div style={{
+                position: 'absolute',
+                bottom: '80px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 10,
+                display: 'flex',
+                gap: '12px',
+                padding: '8px 16px',
+                background: 'rgba(19, 19, 31, 0.8)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid var(--glass-border)',
+                borderRadius: '30px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+            }}>
+                <button
+                    onClick={() => onAction('explain')}
+                    style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '500' }}
+                    title="Explain Code"
+                >
+                    <Sparkles size={16} color="#a29bfe" /> Explain
+                </button>
+                <div style={{ width: '1px', height: '16px', background: 'var(--border)' }}></div>
+                <button
+                    onClick={() => onAction('optimize')}
+                    style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '500' }}
+                    title="Optimize Code"
+                >
+                    <Zap size={16} color="#ffeaa7" /> Optimize
+                </button>
+                <div style={{ width: '1px', height: '16px', background: 'var(--border)' }}></div>
+                <button
+                    onClick={() => onAction('security')}
+                    style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '500' }}
+                    title="Security Audit"
+                >
+                    <ShieldAlert size={16} color="#ff7675" /> Security
+                </button>
+            </div>
+
             <CodeInsights code={code} />
             <div style={{ flex: 1, overflow: 'auto', fontSize: '14px' }}>
                 <SyntaxHighlighter
