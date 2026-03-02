@@ -3,6 +3,19 @@ import ReactMarkdown from 'react-markdown';
 import { Bot, User, Send, Globe, Award, CheckCircle, XCircle, BrainCircuit, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const TypingIndicator = () => (
+    <div style={{ display: 'flex', gap: '4px', padding: '12px', background: 'rgba(28, 28, 46, 0.7)', borderRadius: '12px', width: 'fit-content' }}>
+        {[0, 1, 2].map((i) => (
+            <motion.div
+                key={i}
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+                style={{ width: '6px', height: '6px', background: 'var(--persona-accent)', borderRadius: '50%' }}
+            />
+        ))}
+    </div>
+);
+
 const MentorPanel = ({ activeCode, activeFile }) => {
     const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'quiz'
 
@@ -198,7 +211,11 @@ const MentorPanel = ({ activeCode, activeFile }) => {
                                     </div>
                                 </div>
                             ))}
-                            {loading && <div style={{ color: 'var(--text-muted)' }}>Thinking...</div>}
+                            {loading && (
+                                <div style={{ alignSelf: 'flex-start' }}>
+                                    <TypingIndicator />
+                                </div>
+                            )}
                         </div>
                         <div style={{ padding: '15px', borderTop: '1px solid var(--border)' }}>
                             <button
@@ -300,7 +317,7 @@ const MentorPanel = ({ activeCode, activeFile }) => {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 
