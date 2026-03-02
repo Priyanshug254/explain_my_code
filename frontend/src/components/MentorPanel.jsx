@@ -13,6 +13,7 @@ const MentorPanel = ({ activeCode, activeFile }) => {
     const [loading, setLoading] = useState(false);
     const [mode, setMode] = useState("beginner");
     const [language, setLanguage] = useState("english");
+    const [persona, setPersona] = useState("default"); // 'default' | 'strict' | 'friendly' | 'hacker'
 
     // Quiz State
     const [quizQuestions, setQuizQuestions] = useState(null);
@@ -96,7 +97,7 @@ const MentorPanel = ({ activeCode, activeFile }) => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div className={`persona-panel persona-${persona}`} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid var(--border)' }}>
                 <button
@@ -161,6 +162,18 @@ const MentorPanel = ({ activeCode, activeFile }) => {
                                     <option value="hinglish">Hinglish</option>
                                     <option value="hindi">HI</option>
                                 </select>
+
+                                <select
+                                    className="glass-panel"
+                                    style={{ color: 'white', padding: '5px', outline: 'none' }}
+                                    value={persona}
+                                    onChange={(e) => setPersona(e.target.value)}
+                                >
+                                    <option value="default">Default</option>
+                                    <option value="strict">Strict</option>
+                                    <option value="friendly">Friendly</option>
+                                    <option value="hacker">Hacker</option>
+                                </select>
                             </div>
                             <button
                                 onClick={clearChat}
@@ -175,7 +188,7 @@ const MentorPanel = ({ activeCode, activeFile }) => {
                                     alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
                                     maxWidth: '90%'
                                 }}>
-                                    <div className="glass-panel" style={{
+                                    <div className={`glass-panel ${msg.role === 'system' ? 'persona-bubble-ai' : ''}`} style={{
                                         padding: '12px',
                                         borderRadius: '12px',
                                         background: msg.role === 'user' ? 'rgba(108, 92, 231, 0.2)' : 'rgba(28, 28, 46, 0.7)',

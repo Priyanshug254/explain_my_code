@@ -17,6 +17,35 @@
 
   --glass: rgba(28, 28, 46, 0.7);
   --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Persona Defaults */
+  --persona-accent: var(--primary);
+  --persona-glow: var(--primary-glow);
+}
+
+.persona-strict {
+  --persona-accent: #ff4757;
+  --persona-glow: rgba(255, 71, 87, 0.4);
+}
+
+.persona-friendly {
+  --persona-accent: #2ed573;
+  --persona-glow: rgba(46, 213, 115, 0.4);
+}
+
+.persona-hacker {
+  --persona-accent: #3742fa;
+  --persona-glow: rgba(55, 66, 250, 0.4);
+}
+
+.persona-panel {
+  transition: all 0.5s ease;
+  border-left: 3px solid var(--persona-accent) !important;
+  box-shadow: -5px 0 20px var(--persona-glow);
+}
+
+.persona-bubble-ai {
+  border-left: 2px solid var(--persona-accent) !important;
 }
 
 body {
