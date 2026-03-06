@@ -1162,3 +1162,62 @@ textarea:focus-visible {
     transform: translateY(0px);
   }
 }
+
+/* Holographic UI & Depth Polish - Contribution 4 */
+.holographic-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 0 80px rgba(255, 255, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.holographic-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg,
+      transparent,
+      rgba(108, 92, 231, 0.1),
+      transparent 25%,
+      rgba(0, 206, 201, 0.1),
+      transparent 50%);
+  animation: rotate 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.refractive-glass {
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  background-color: rgba(17, 25, 40, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.magnetic-item {
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mouse-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(108, 92, 231, 0.15), transparent 40%),
+    var(--bg-dark);
+  pointer-events: none;
+}

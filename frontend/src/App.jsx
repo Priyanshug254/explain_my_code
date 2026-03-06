@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './index.css';
 
 // Components (We will create these next)
@@ -25,6 +25,15 @@ function App() {
     setAiAction({ type: actionType, timestamp: Date.now() });
   };
 
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const handleProjectLoaded = (tree) => {
     setProjectTree(tree);
   };
@@ -47,15 +56,15 @@ function App() {
   return (
     <div className={`fullscreen ${isZenMode ? 'zen-mode' : ''}`}>
       {/* Header */}
-      <header className="glass-panel" style={{ height: '60px', margin: '10px', display: 'flex', alignItems: 'center', padding: '0 20px', justifyContent: 'space-between' }}>
-        <h1 className="gradient-text" style={{ fontSize: '1.2rem', fontWeight: '800', margin: 0 }}>
+      <header className="holographic-panel" style={{ height: '60px', margin: '10px', display: 'flex', alignItems: 'center', padding: '0 20px', justifyContent: 'space-between', borderRadius: '12px' }}>
+        <h1 className="gradient-text animate-float" style={{ fontSize: '1.4rem', fontWeight: '900', margin: 0 }}>
           CodeMentor AI
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           {projectTree && (
             <button
               onClick={() => setShowPulse(true)}
-              className="badge badge-warning"
+              className="badge badge-warning hover-lift"
               style={{ cursor: 'pointer', border: '1px solid currentColor', display: 'flex', gap: '5px' }}
             >
               <Activity size={14} /> Project Pulse
@@ -63,7 +72,7 @@ function App() {
           )}
           <button
             onClick={toggleZenMode}
-            className={`badge ${isZenMode ? 'badge-success' : 'badge-info'}`}
+            className={`badge ${isZenMode ? 'badge-success' : 'badge-info'} hover-lift`}
             style={{ cursor: 'pointer', border: '1px solid currentColor' }}
           >
             {isZenMode ? 'Exit Zen Mode' : 'Zen Mode'}
@@ -75,7 +84,7 @@ function App() {
       <div style={{ display: 'flex', flex: 1, gap: '10px', padding: '0 10px 10px 10px', overflow: 'hidden' }}>
 
         {/* Left: Project Explorer */}
-        <div className="glass-panel explorer-panel" style={{ width: '250px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div className="holographic-panel explorer-panel" style={{ width: '250px', display: 'flex', flexDirection: 'column', overflow: 'hidden', borderRadius: '12px' }}>
           <div style={{ padding: '15px', borderBottom: '1px solid var(--border)', fontWeight: '600' }}>Explorer</div>
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {!projectTree ? (
@@ -87,13 +96,13 @@ function App() {
         </div>
 
         {/* Center: Code Viewer */}
-        <div className="glass-panel code-workspace" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+        <div className="holographic-panel code-workspace" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', borderRadius: '12px' }}>
           {!projectTree ? (
             <FileUpload onUploadSuccess={handleProjectLoaded} />
           ) : (
             <>
               <div style={{ padding: '10px 15px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <span style={{ fontWeight: '500' }}>{activeFile || "Select a file"}</span>
+                <span className="text-glow-primary" style={{ fontWeight: '600' }}>{activeFile || "Select a file"}</span>
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 <CodeViewer
@@ -107,7 +116,7 @@ function App() {
         </div>
 
         {/* Right: AI Mentor */}
-        <div className="glass-panel mentor-sidebar" style={{ width: '350px', display: 'flex', flexDirection: 'column' }}>
+        <div className="holographic-panel mentor-sidebar" style={{ width: '350px', display: 'flex', flexDirection: 'column', borderRadius: '12px' }}>
           <MentorPanel activeCode={activeCode} activeFile={activeFile} externalAction={aiAction} />
         </div>
 
