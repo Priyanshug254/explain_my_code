@@ -41,8 +41,21 @@ const CodeViewer = ({ code, language, onAction }) => {
         document.body.removeChild(element);
     };
 
+    const getLineStyles = (lineNumber) => {
+        // Mock heatmap: highlight every 7th line as 'complex' and 12th as 'critical'
+        if (lineNumber % 12 === 0) return { background: 'rgba(255, 71, 87, 0.15)', borderLeft: '3px solid #ff4757', display: 'block' };
+        if (lineNumber % 7 === 0) return { background: 'rgba(255, 165, 2, 0.1)', borderLeft: '2px solid #ffa502', display: 'block' };
+        return { display: 'block' };
+    };
+
     return (
         <div style={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+            {/* Heatmap Legend */}
+            <div style={{ position: 'absolute', bottom: '100px', right: '25px', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <div className="badge" style={{ background: 'rgba(255, 71, 87, 0.2)', color: '#ff4757', fontSize: '0.65rem' }}>Critical Hotspot</div>
+                <div className="badge" style={{ background: 'rgba(255, 165, 2, 0.2)', color: '#ffa502', fontSize: '0.65rem' }}>Moderate Load</div>
+            </div>
+
             <div style={{ position: 'absolute', top: '10px', right: '25px', zIndex: 10, display: 'flex', gap: '10px' }}>
                 <button
                     onClick={handleDownload}
@@ -122,7 +135,10 @@ const CodeViewer = ({ code, language, onAction }) => {
                     style={vscDarkPlus}
                     customStyle={{ background: 'transparent', margin: 0, padding: '20px' }}
                     showLineNumbers={true}
-                    lineNumberStyle={{ color: '#444' }}
+                    lineNumberStyle={{ color: '#444', minWidth: '35px', textAlign: 'right', paddingRight: '15px' }}
+                    lineProps={(lineNumber) => ({
+                        style: getLineStyles(lineNumber)
+                    })}
                 >
                     {code}
                 </SyntaxHighlighter>
