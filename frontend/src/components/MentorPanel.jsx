@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Bot, User, Send, Globe, Award, CheckCircle, XCircle, BrainCircuit, MessageSquare } from 'lucide-react';
+import { Bot, User, Send, Globe, Award, CheckCircle, XCircle, BrainCircuit, MessageSquare, Mic, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TypingIndicator = () => (
@@ -40,6 +40,28 @@ const MentorPanel = ({ activeCode, activeFile, externalAction }) => {
     const [mode, setMode] = useState("beginner");
     const [language, setLanguage] = useState("english");
     const [persona, setPersona] = useState("default"); // 'default' | 'strict' | 'friendly' | 'hacker'
+    const [isListening, setIsListening] = useState(false);
+
+    const startVoiceRecognition = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Voice recognition not supported in this browser.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = language === 'hindi' ? 'hi-IN' : 'en-US';
+        recognition.continuous = false;
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onend = () => setIsListening(false);
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            askAI(transcript);
+        };
+
+        recognition.start();
+    };
 
     // Quiz State
     const [quizQuestions, setQuizQuestions] = useState(null);
@@ -200,6 +222,20 @@ const MentorPanel = ({ activeCode, activeFile, externalAction }) => {
                                     <option value="friendly">Friendly</option>
                                     <option value="hacker">Hacker</option>
                                 </select>
+
+                                <button
+                                    onClick={startVoiceRecognition}
+                                    className={`badge ${isListening ? 'animate-pulse' : ''}`}
+                                    style={{
+                                        background: isListening ? 'rgba(231, 76, 60, 0.2)' : 'rgba(255,255,255,0.05)',
+                                        color: isListening ? '#e74c3c' : 'var(--text-muted)',
+                                        border: '1px solid currentColor',
+                                        cursor: 'pointer'
+                                    }}
+                                    title="Sonic Command Mode"
+                                >
+                                    {isListening ? <Mic size={14} /> : <MicOff size={14} />}
+                                </button>
                             </div>
                             <button
                                 onClick={clearChat}
