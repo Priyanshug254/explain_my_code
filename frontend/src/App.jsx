@@ -6,7 +6,9 @@ import FileUpload from './components/FileUpload';
 import FileTree from './components/FileTree';
 import CodeViewer from './components/CodeViewer';
 import MentorPanel from './components/MentorPanel';
+import ProjectPulse from './components/ProjectPulse';
 import Footer from './components/Footer';
+import { Activity } from 'lucide-react';
 
 function App() {
   const [projectTree, setProjectTree] = useState(null);
@@ -15,6 +17,7 @@ function App() {
   const [activePath, setActivePath] = useState("");
   const [aiAction, setAiAction] = useState(null);
   const [isZenMode, setIsZenMode] = useState(false);
+  const [showPulse, setShowPulse] = useState(false);
 
   const toggleZenMode = () => setIsZenMode(!isZenMode);
 
@@ -49,7 +52,15 @@ function App() {
           CodeMentor AI
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          {projectTree && <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{projectTree.name}</span>}
+          {projectTree && (
+            <button
+              onClick={() => setShowPulse(true)}
+              className="badge badge-warning"
+              style={{ cursor: 'pointer', border: '1px solid currentColor', display: 'flex', gap: '5px' }}
+            >
+              <Activity size={14} /> Project Pulse
+            </button>
+          )}
           <button
             onClick={toggleZenMode}
             className={`badge ${isZenMode ? 'badge-success' : 'badge-info'}`}
@@ -102,6 +113,7 @@ function App() {
 
       </div>
       <Footer />
+      {showPulse && <ProjectPulse onClose={() => setShowPulse(false)} />}
     </div>
   );
 }
